@@ -1,0 +1,131 @@
+{
+	"name": "@sourceregistry/sveltekit-actionbus",
+	"version": "0.0.1",
+	"license": "Apache-2.0",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build && npm run prepack",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"prepack": "svelte-kit sync && svelte-package && publint",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test:unit": "vitest --run",
+		"test": "npm run check && npm run test:unit",
+		"docs:build": "typedoc --skipErrorChecking --entryPoints src/lib/protocol.ts --entryPoints src/lib/server/index.ts --entryPoints src/lib/vite/index.ts --out generated/docs --name \"sveltekit-actionbus\"",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		},
+		"./ActionBus.svelte": {
+			"types": "./dist/client/ActionBus.svelte.d.ts",
+			"svelte": "./dist/client/ActionBus.svelte"
+		},
+		"./ActionSubscription.svelte": {
+			"types": "./dist/client/ActionSubscription.svelte.d.ts",
+			"svelte": "./dist/client/ActionSubscription.svelte"
+		},
+		"./client": {
+			"types": "./dist/client/index.d.ts",
+			"svelte": "./dist/client/index.js"
+		},
+		"./server": {
+			"types": "./dist/server/index.d.ts",
+			"import": "./dist/server/index.js"
+		},
+		"./vite": {
+			"types": "./dist/vite/index.d.ts",
+			"default": "./dist/vite/index.js"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SourceRegistry/sveltekit-actionbus.git"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/SourceRegistry/sveltekit-actionbus/issues"
+	},
+	"homepage": "https://sourceregistry.github.io/sveltekit-actionbus/",
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	},
+	"dependencies": {
+		"@sourceregistry/sveltekit-websockets": "^1.0.6"
+	},
+	"devDependencies": {
+		"@eslint/compat": "^2.0.4",
+		"@eslint/js": "^10.0.1",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/commit-analyzer": "^13.0.1",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/npm": "^13.1.5",
+		"@semantic-release/release-notes-generator": "^14.1.0",
+		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/kit": "^2.57.0",
+		"@sveltejs/package": "^2.5.7",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@types/node": "^24",
+		"@vitest/coverage-v8": "^4.1.5",
+		"eslint": "^10.2.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.17.0",
+		"globals": "^17.4.0",
+		"prettier": "^3.8.1",
+		"prettier-plugin-svelte": "^3.5.1",
+		"publint": "^0.3.18",
+		"svelte": "^5.55.2",
+		"svelte-check": "^4.4.6",
+		"typedoc": "^0.28.19",
+		"typescript": "^6.0.2",
+		"typescript-eslint": "^8.58.1",
+		"vite": "^8.0.7",
+		"vitest": "^4.1.5"
+	},
+	"keywords": [
+		"svelte"
+	],
+	"release": {
+		"branches": [
+			"main",
+			{
+				"name": "alpha",
+				"prerelease": true
+			}
+		],
+		"plugins": [
+			"@semantic-release/commit-analyzer",
+			"@semantic-release/release-notes-generator",
+			"@semantic-release/changelog",
+			"@semantic-release/npm",
+			[
+				"@semantic-release/git",
+				{
+					"assets": [
+						"package.json",
+						"package-lock.json",
+						"CHANGELOG.md"
+					],
+					"message": "sveltekit-actionbus(release): v${nextRelease.version}\n\n${nextRelease.notes}"
+				}
+			]
+		]
+	}
+}

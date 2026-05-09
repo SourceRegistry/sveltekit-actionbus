@@ -37,7 +37,7 @@ type EventNameForPattern<Pattern extends ActionChannelPattern> = Extract<
 type NamedEventForPattern<
 	Pattern extends ActionChannelPattern,
 	EventName extends EventNameForPattern<Pattern>
-> = EventsForPattern<Pattern>[EventName] & { type: EventName };
+> = Action<EventsForPattern<Pattern>[EventName], EventName>;
 
 export type ActionEventForChannel<Channel extends string> =
 	ActionChannelPatternFor<Channel> extends infer Pattern
@@ -60,17 +60,35 @@ export type ActionEventTypeForChannels<Channels extends readonly string[]> = Ext
 	string
 >;
 
+type ActionMessageForEventType<
+	Channels extends readonly string[],
+	Type extends string
+> = Channels[number] extends infer Channel
+	? Channel extends string
+		? ActionEventForChannel<Channel> extends infer Event
+			? Event extends { type: Type }
+				? {
+						channel: Channel;
+						event: Event;
+					}
+				: never
+			: never
+		: never
+	: never;
+
 export type ActionReducerMap<State, Channels extends readonly string[]> = Partial<{
 	[Type in ActionEventTypeForChannels<Channels>]: (
 		state: State,
-		message: Extract<ActionMessage<Channels[number]>, { event: { type: Type } }>
+		message: ActionMessageForEventType<Channels, Type>
 	) => State;
 }>;
 
-export type ActionMessage<Channel extends string = string> = {
-	channel: Channel;
-	event: ActionEventForChannel<Channel>;
-};
+export type ActionMessage<Channel extends string = string> = Channel extends string
+	? {
+			channel: Channel;
+			event: ActionEventForChannel<Channel>;
+		}
+	: never;
 
 export type ActionBusError<Channel extends string = string> = {
 	code: string;

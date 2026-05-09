@@ -44,6 +44,9 @@
 			initial: State,
 			reducers: ActionReducerMap<State, Channels>
 		) => Readable<State>;
+		channel: <Channel extends Channels[number]>(
+			channel: Channel
+		) => ActionSubscription<readonly [Channel]>;
 		close: () => void;
 	};
 
@@ -80,6 +83,14 @@
 
 		onDestroy(close);
 
+		return createActionSubscription(controller, channels, close);
+	}
+
+	function createActionSubscription<const Channels extends readonly string[]>(
+		controller: ActionBusController,
+		channels: Channels,
+		close: () => void
+	): ActionSubscription<Channels> {
 		return {
 			channels,
 			state: controller.state,
@@ -121,6 +132,9 @@
 						set(initial);
 					};
 				});
+			},
+			channel(channel) {
+				return createActionSubscription(controller, [channel] as const, close);
 			},
 			close
 		};

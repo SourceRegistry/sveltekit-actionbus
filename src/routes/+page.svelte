@@ -4,15 +4,14 @@
 
 	let { data } = $props();
 
-	const project = subscribe('project:demo', 'user:test:notifications');
+	const actionbus = subscribe('project:demo', 'user:test:notifications');
+	const project = actionbus.channel('project:demo');
 
-	const connection = project.state;
-	const errors = project.errors;
+	const connection = actionbus.state;
+	const errors = actionbus.errors;
 	// svelte-ignore state_referenced_locally
 	const tasks = project.eventStore(data.tasks, {
 		'task.updated': (tasks, message) => {
-			if (message.channel !== 'project:demo') return tasks;
-
 			return tasks.map((task) =>
 				task.id === message.event.payload.id
 					? { ...task, title: message.event.payload.title }
@@ -20,8 +19,6 @@
 			);
 		},
 		'task.deleted': (tasks, message) => {
-			if (message.channel !== 'project:demo') return tasks;
-
 			return tasks.filter((task) => task.id !== message.event.payload.id);
 		}
 	});

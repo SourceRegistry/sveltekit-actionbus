@@ -44,18 +44,16 @@ Declare the channels and events your app can use.
 
 ```ts
 // src/app.d.ts
-import type { Action } from '@sourceregistry/sveltekit-actionbus';
-
 declare global {
 	namespace App {
 		interface ActionEvents {
 			'project:${string}': {
-				'task.updated': Action<{ id: string; title: string }>;
-				'task.deleted': Action<{ id: string }>;
+				'task.updated': { id: string; title: string };
+				'task.deleted': { id: string };
 			};
 
 			'user:${string}:notifications': {
-				'notification.created': Action<{ id: string; message: string }>;
+				'notification.created': { id: string; message: string };
 			};
 		}
 	}
@@ -87,23 +85,24 @@ Subscribe from descendants with the module export from `ActionBus.svelte`.
 <script lang="ts">
 	import { subscribe } from '@sourceregistry/sveltekit-actionbus/ActionBus.svelte';
 
-	const project = subscribe(['project:123'] as const);
-	const errors = project.errors;
+	const actionbus = subscribe('project:123', 'user:me:notifications');
+	const project = actionbus.channel('project:123');
+	const errors = actionbus.errors;
 
 	const tasks = project.eventStore(data.tasks, {
 		'task.updated': (tasks, message) => {
-			if (message.channel !== 'project:123') return tasks;
-
 			return upsert(tasks, message.event.payload);
 		},
 		'task.deleted': (tasks, message) => {
-			if (message.channel !== 'project:123') return tasks;
-
 			return tasks.filter((task) => task.id !== message.event.payload.id);
 		}
 	});
 </script>
 ```
+
+`subscribe(...)` can retain multiple channels with one shared connection. Use
+`subscription.channel(channel)` when reducers should be scoped to one channel, especially when
+different channels can emit the same event name.
 
 You can also use the convenience component.
 

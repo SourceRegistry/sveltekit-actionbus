@@ -12,17 +12,15 @@ describe('generateActionMetadata', () => {
 		fs.writeFileSync(
 			appDtsPath,
 			`
-				import type { Action } from 'sveltekit-actionbus';
-
 				declare global {
 					namespace App {
 						interface ActionEvents {
 							'project:\${string}': {
-								'task.updated': Action<{ id: string; title: string }>;
-								'task.deleted': Action<{ id: string }>;
+								'task.updated': { id: string; title: string };
+								'task.deleted': { id: string };
 							};
 							'user:\${string}:notifications': {
-								'notification.created': Action<{ id: string }>;
+								'notification.created': { id: string };
 							};
 						}
 					}

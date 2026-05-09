@@ -1,28 +1,10 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import {
-		type ActionBusState,
-		type ActionBusError,
-		type ActionChannel,
-		type ActionMessage,
-		type ActionReducerMap
-	} from '$lib/protocol.js';
+	import { type ActionChannel } from '$lib/protocol.js';
+	import type { ActionSubscription } from './ActionBus.svelte';
 
 	export type ActionSubscriptionSnippet<Channels extends readonly string[]> = Snippet<
-		[
-			{
-				channels: Channels;
-				state: Readable<ActionBusState>;
-				events: Readable<ActionMessage<Channels[number]>[]>;
-				errors: Readable<ActionBusError<Channels[number]>[]>;
-				eventStore: <State>(
-					initial: State,
-					reducers: ActionReducerMap<State, Channels>
-				) => Readable<State>;
-				close: () => void;
-			}
-		]
+		[ActionSubscription<Channels>]
 	>;
 
 	export type ActionSubscriptionProps<Channels extends readonly ActionChannel[]> = {
